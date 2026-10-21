@@ -7,6 +7,7 @@ use App\Services\FacultyService;
 use Database\Seeders\AcademicRoutineSeeder;
 use Database\Seeders\CourseOfferingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class RoutineControllerTest extends TestCase
@@ -334,5 +335,34 @@ class RoutineControllerTest extends TestCase
         $response->assertSee('room-text');
         $response->assertSee('TARGET_WIDTH = 1920');
         $response->assertSee('-webkit-print-color-adjust: exact');
+    }
+
+    public function test_version_05_routine_metadata_and_expanded_sections(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+        $response->assertSee('Effective: October 10, 2026');
+
+        // Verify Batch 40 has sections up to H
+        $batch40Response = $this->get('/?batch=40&section=H');
+        $batch40Response->assertStatus(200);
+        $sections40 = $batch40Response->viewData('sectionsList');
+        $this->assertContains('H', $sections40);
+
+        // Verify Batch 43 has sections up to O
+        $batch43Response = $this->get('/?batch=43&section=O');
+        $batch43Response->assertStatus(200);
+        $sections43 = $batch43Response->viewData('sectionsList');
+        $this->assertContains('O', $sections43);
+
+        // Verify all 1341 routine slots were seeded
+        $this->assertEquals(1341, DB::table('academic_routines')->count());
+
+        // Verify no room has trailing .0
+        $dotZeroRooms = DB::table('academic_routines')
+            ->where('classroom_no', 'LIKE', '%.0%')
+            ->count();
+        $this->assertEquals(0, $dotZeroRooms);
     }
 }

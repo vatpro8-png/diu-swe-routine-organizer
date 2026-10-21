@@ -674,7 +674,7 @@
             </div>
             <div class="text-right text-[8.5px] leading-tight">
                 <div class="font-extrabold text-[10px] text-slate-900">Batch {{ $batch }} • Section {{ $section }} @if($track)({{ $track }})@endif</div>
-                <div class="text-slate-600">Effective: Sept 19, 2026 • Exported: {{ date('d M Y, h:i A') }}</div>
+                <div class="text-slate-600">Effective: October 10, 2026 • Exported: {{ date('d M Y, h:i A') }}</div>
             </div>
         </div>
     </div>
@@ -820,7 +820,7 @@
                     </span>
                     <span class="text-[9px] px-1.5 py-0.5 rounded bg-[#EFF6FC] text-[#0078D4] font-mono font-bold">Active</span>
                 </div>
-                <div class="text-[10px] text-[#605E5C] mt-0.5">Effective: October 03, 2026</div>
+                <div class="text-[10px] text-[#605E5C] mt-0.5">Effective: October 10, 2026</div>
                 <div class="text-[10px] text-[#0078D4] mt-0.5 font-mono font-semibold">Batch {{ $batch }} • Section {{ $section }}</div>
                 <div class="text-[10px] text-[#605E5C] mt-0.5 font-mono">Routine Hours: 08:30 AM – 05:30 PM</div>
                 
@@ -1076,7 +1076,7 @@
                                         </div>
                                     </div>
                                     <div class="text-right text-[10px] leading-tight">
-                                        <div class="font-mono text-white font-bold">Effective: October 03, 2026</div>
+                                        <div class="font-mono text-white font-bold">Effective: October 10, 2026</div>
                                         <div class="text-[#EFF6FC] text-[9.5px]">Ashulia Smart City (DSC) • A4 Landscape</div>
                                     </div>
                                 </div>
@@ -2406,7 +2406,7 @@
                                 Department of Software Engineering • Faculty of Science &amp; Information Technology (FSIT), Daffodil International University, Ashulia Smart City.
                             </p>
                             <div class="text-[11px] text-[#605E5C]">
-                                <span>Academic Session: <strong>Fall 2026</strong></span> • <span>Effective: <strong>October 03, 2026</strong></span>
+                                <span>Academic Session: <strong>Fall 2026</strong></span> • <span>Effective: <strong>October 10, 2026</strong></span>
                             </div>
                         </div>
 

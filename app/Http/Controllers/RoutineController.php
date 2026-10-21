@@ -210,7 +210,13 @@ class RoutineController extends Controller
                 : [];
         }
 
-        $maxSection = $batch === 40 ? 'F' : ($batch === 41 ? 'L' : (in_array($batch, [43, 44, 45]) ? 'N' : 'M'));
+        $maxSection = match ($batch) {
+            40 => 'H',
+            41 => 'L',
+            43, 46, 48 => 'O',
+            44, 45 => 'N',
+            default => 'M',
+        };
         $sectionsList = range('A', $maxSection);
 
         $days = array_keys(AcademicRoutine::DAY_ORDER);

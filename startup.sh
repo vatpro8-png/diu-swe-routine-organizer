@@ -22,3 +22,4 @@ chmod -R 777 /home/site/wwwroot/storage /home/site/wwwroot/bootstrap/cache /home
 cd /home/site/wwwroot
 php artisan config:clear
 php artisan migrate --force --no-interaction
+php artisan db:seed --force --no-interaction

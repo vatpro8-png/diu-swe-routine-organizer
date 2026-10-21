@@ -18,10 +18,11 @@ The routine matrix maps out the entire Daffodil International University (DIU) S
 
 | Cohort / Target Batch | Section Character Range Boundary | Major Engineering Branch Tracks (Tracks Flag) |
 | :--- | :--- | :--- |
-| **Batches 49, 48, 47, 46, 42** | 13 Sections (`A` through `M` alphabetically) | Core Requirements Matrix (No specialization track split) |
-| **Batches 45, 44, 43** | 14 Sections (`A` through `N` alphabetically) | Core Requirements Matrix (No specialization track split) |
+| **Batches 49, 47, 42** | Up to 13 Sections (`A` through `M` alphabetically) | Core Requirements Matrix (No specialization track split) |
+| **Batches 45, 44** | Up to 14 Sections (`A` through `N` alphabetically) | Core Requirements Matrix (No specialization track split) |
+| **Batches 48, 46, 43** | Up to 15 Sections (`A` through `O` alphabetically) | Core Requirements Matrix (No specialization track split) |
 | **Batch 41 (Specialized Majors)**| 12 Sections (`A` through `L` alphabetically) | **SE** (Software Engineering)<br>**DS** (Data Science)<br>**RE** (Robotics & Embedded Systems)<br>**ST** (Software Testing)<br>**CS** (Cyber Security) |
-| **Batch 40 (Graduating Seniors)**| 6 Sections (`A` through `F` alphabetically) | Senior Project Modules (Mapped as `SE` track entries) |
+| **Batch 40 (Graduating Seniors)**| 8 Sections (`A` through `H` alphabetically) | Senior Project Modules (Mapped as `SE` track entries) |
 
 ---
 

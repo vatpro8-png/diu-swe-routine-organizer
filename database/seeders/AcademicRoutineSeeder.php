@@ -16,7 +16,14 @@ class AcademicRoutineSeeder extends Seeder
      */
     public function run(): void
     {
-        $xlsxPath = base_path('swe-routine-fall-2026-studentversion04-4b80406fe1.xlsx');
+        $xlsxPath = base_path('swe-routine-fall-2026-student-version05-14d5a45ef6.xlsx');
+        if (! file_exists($xlsxPath)) {
+            $matchedFiles = glob(base_path('swe-routine-fall-2026-*.xlsx'));
+            if (! empty($matchedFiles)) {
+                rsort($matchedFiles);
+                $xlsxPath = $matchedFiles[0];
+            }
+        }
 
         if (! file_exists($xlsxPath)) {
             $this->command->error("Routine Excel file not found at: {$xlsxPath}");
@@ -122,8 +129,9 @@ class AcademicRoutineSeeder extends Seeder
                 continue;
             }
 
-            // Room normalization (e.g. "Annex - 106" -> "Annex-106")
+            // Room normalization (e.g. "Annex - 106" -> "Annex-106", "611.0" -> "611")
             $room = preg_replace('/Annex\s*-\s*/i', 'Annex-', $colA);
+            $room = preg_replace('/\.0+$/', '', $room);
             $building = AcademicRoutine::resolveBuilding($room);
 
             if (! isset($distinctClassrooms[$room])) {
