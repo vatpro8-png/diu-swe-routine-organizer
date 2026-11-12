@@ -14,9 +14,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1E9F23539B8245DABDE147A53FF3DA38 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_22015BB96E9F46D19CD6D02DB9B73F3A }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8390355B076D43068FDFB1539531747D }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3329C2E382C8486C9FF92D016D24B31B }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_0E49479C89A4435A9DEE39F571751C2D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_00233EE38F304450840B395C7EBF7A71 }}
 
       - name: Restart Web App Service
         uses: azure/cli@v2
