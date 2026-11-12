@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExamRoutineController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoutineController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,15 @@ Route::get('/routine/empty-rooms', [RoutineController::class, 'emptyRooms'])->na
 // Customizable Routine Engine actions
 Route::post('/custom-routine/toggle', [RoutineController::class, 'toggleCustomSlot'])->name('custom.toggle');
 Route::post('/custom-routine/clear', [RoutineController::class, 'clearCustomRoutine'])->name('custom.clear');
+
+// Exam Routine (Midterm & Final) & Exam Sheet Browser routes
+Route::post('/exam-routine/upload', [ExamRoutineController::class, 'uploadSheet'])->name('exam-routine.upload');
+Route::post('/exam-routine/select-sheet', [ExamRoutineController::class, 'selectSheet'])->name('exam-routine.select-sheet');
+Route::post('/exam-routine/slot', [ExamRoutineController::class, 'storeSlot'])->name('exam-routine.slot.store');
+Route::delete('/exam-routine/clear', [ExamRoutineController::class, 'clear'])->name('exam-routine.clear');
+Route::get('/exam-routine/template', [ExamRoutineController::class, 'downloadTemplate'])->name('exam-routine.template');
+Route::get('/exam-routine/export/csv', [ExamRoutineController::class, 'exportCsv'])->name('exam-routine.export.csv');
+Route::get('/exam-routine/export/ics', [ExamRoutineController::class, 'exportIcs'])->name('exam-routine.export.ics');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

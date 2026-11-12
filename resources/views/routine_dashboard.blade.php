@@ -43,7 +43,7 @@
             "name": "Hafizur Rahman Provat",
             "url": "https://hafizurrahmanprovat.tech",
             "sameAs": [
-              "https://github.com/provat1640",
+              "https://github.com/vatpro8-png",
               "https://hafizurrahmanprovat.tech"
             ],
             "jobTitle": "Lead Software Engineer",
@@ -275,11 +275,18 @@
         ::-webkit-scrollbar-thumb { background: #C8C6C4; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #8A8886; }
 
-        /* Strictly One Landscape Page Layout & Print Optimization */
+        /* Strictly One Landscape Page Layout & Print Optimization (Portrait for Cover Page) */
+        @if(($activeTab ?? 'routine') === 'cover_page')
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+        @else
         @page {
             size: A4 landscape;
             margin: 4mm 5mm;
         }
+        @endif
 
         @media print {
             .no-print { display: none !important; }
@@ -295,7 +302,26 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
+            @if(($activeTab ?? 'routine') === 'cover_page')
+            .print-only { display: none !important; }
+            html, body {
+                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+                font-size: 12pt !important;
+            }
+            #coverPageSheet {
+                width: 210mm !important;
+                min-height: 297mm !important;
+                max-width: none !important;
+                margin: 0 auto !important;
+                box-shadow: none !important;
+                border: none !important;
+                page-break-inside: avoid;
+            }
+            @else
             .print-only { display: block !important; }
+            @endif
             .print-container {
                 display: flex !important;
                 flex-direction: column !important;
@@ -782,6 +808,26 @@
                     <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#EFF6FC] text-[#0078D4]">
                         {{ $offeringsCount ?? $offerings->count() }}
                     </span>
+                </a>
+
+                <!-- 6. Exam Routine (Midterm / Final) -->
+                <a href="{{ route('routine.index', ['tab' => 'exam_routine', 'exam_type' => $examType ?? 'Midterm']) }}" class="sidebar-item flex items-center justify-between px-3 py-2.5 text-xs sm:text-sm font-semibold {{ $activeTab === 'exam_routine' ? 'active' : '' }}">
+                    <div class="flex items-center gap-2.5">
+                        <svg class="w-4 h-4 shrink-0 {{ $activeTab === 'exam_routine' ? 'text-[#0078D4]' : 'text-[#605E5C]' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        <span>Exam Routine (Mid/Final)</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#EFF6FC] text-[#0078D4]">
+                        {{ ($examCounts['Midterm'] ?? 0) + ($examCounts['Final'] ?? 0) }}
+                    </span>
+                </a>
+
+                <!-- 7. Cover Page Generator -->
+                <a href="{{ route('routine.index', ['tab' => 'cover_page', 'cover_type' => $coverType ?? 'lab_report']) }}" class="sidebar-item flex items-center justify-between px-3 py-2.5 text-xs sm:text-sm font-semibold {{ $activeTab === 'cover_page' ? 'active' : '' }}">
+                    <div class="flex items-center gap-2.5">
+                        <svg class="w-4 h-4 shrink-0 {{ $activeTab === 'cover_page' ? 'text-[#0078D4]' : 'text-[#605E5C]' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        <span>Cover Page Generator</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#DFF6DD] text-[#107C41]">4 Types</span>
                 </a>
 
                 <!-- Export Shortcuts in Sidebar -->
@@ -2387,6 +2433,14 @@
                     </div>
                 @endif
 
+                @if($activeTab === 'exam_routine')
+                    @include('partials.exam_routine_tab')
+                @endif
+
+                @if($activeTab === 'cover_page')
+                    @include('partials.cover_page_tab')
+                @endif
+
             </main>
 
             <!-- Bottom Campus Academic Footer -->
@@ -2416,6 +2470,8 @@
                             <ul class="space-y-1.5 text-xs">
                                 <li><a href="{{ route('routine.index', ['tab' => 'routine', 'batch' => 49]) }}" class="hover:text-[#0078D4] hover:underline flex items-center gap-1.5"><span class="text-[#0078D4]">›</span> Batch 49 Routine</a></li>
                                 <li><a href="{{ route('routine.index', ['tab' => 'routine', 'batch' => 41]) }}" class="hover:text-[#0078D4] hover:underline flex items-center gap-1.5"><span class="text-[#0078D4]">›</span> Batch 41 Specializations</a></li>
+                                <li><a href="{{ route('routine.index', ['tab' => 'exam_routine', 'exam_type' => 'Midterm']) }}" class="hover:text-[#0078D4] hover:underline flex items-center gap-1.5"><span class="text-[#0078D4]">›</span> Exam Routine (Midterm / Final)</a></li>
+                                <li><a href="{{ route('routine.index', ['tab' => 'cover_page', 'cover_type' => 'lab_report']) }}" class="hover:text-[#0078D4] hover:underline flex items-center gap-1.5"><span class="text-[#0078D4]">›</span> Assignment &amp; Lab Cover Pages</a></li>
                                 <li><a href="{{ route('routine.index', ['tab' => 'faculty']) }}" class="hover:text-[#0078D4] hover:underline flex items-center gap-1.5"><span class="text-[#0078D4]">›</span> Faculty Schedule Analyzer</a></li>
                                 <li><a href="{{ route('routine.index', ['tab' => 'empty_rooms']) }}" class="hover:text-[#0078D4] hover:underline flex items-center gap-1.5"><span class="text-[#0078D4]">›</span> Empty Classroom &amp; Lab Tracker</a></li>
                                 <li><a href="{{ route('routine.index', ['tab' => 'custom']) }}" class="hover:text-[#0078D4] hover:underline flex items-center gap-1.5"><span class="text-[#0078D4]">›</span> Custom Routine Builder</a></li>
@@ -3005,6 +3061,471 @@
                 document.body.style.overflow = '';
             }
         }
+
+        // Exam Routine Raw Sheet Browser Live Filter
+        function filterRawExamSheetRows() {
+            const input = document.getElementById('rawSheetFilterInput');
+            const table = document.getElementById('rawExamSheetTable');
+            if (!input || !table) {
+                return;
+            }
+            const query = input.value.trim().toLowerCase();
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const text = (row.textContent || '').toLowerCase();
+                row.style.display = query === '' || text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // Assignment & Academic Cover Page Studio Logic
+        const COVER_PREFS_STORAGE_KEY = 'diu_swe_cover_student_prefs_v1';
+
+        const COVER_TEMPLATE_META = {
+            lab_report: {
+                banner: 'LAB REPORT',
+                numLabel: 'Experiment No.',
+                numDefault: 'Experiment No. 01',
+                titleLabel: 'Experiment / Report Title',
+                titleDefault: 'Asymptotic Complexity & Divide-and-Conquer Sorting',
+                showMarksDefault: true,
+            },
+            final_lab_report: {
+                banner: 'FINAL LAB REPORT',
+                numLabel: 'Portfolio / Course Unit',
+                numDefault: 'Final Lab Portfolio',
+                titleLabel: 'Final Lab Report / Project Title',
+                titleDefault: 'Comprehensive Software Implementation & Lab Portfolio',
+                showMarksDefault: true,
+            },
+            theory_assessment: {
+                banner: 'THEORY ASSESSMENT REPORT',
+                numLabel: 'Assessment No.',
+                numDefault: 'Theory Assessment 01',
+                titleLabel: 'Assessment / Term Paper Topic',
+                titleDefault: 'Architectural Trade-offs & Quality Attribute Analysis',
+                showMarksDefault: true,
+            },
+            assignment: {
+                banner: 'ASSIGNMENT',
+                numLabel: 'Assignment No.',
+                numDefault: 'Assignment No. 01',
+                titleLabel: 'Assignment Topic / Title',
+                titleDefault: 'Problem Solving & Analytical Modeling',
+                showMarksDefault: false,
+            }
+        };
+
+        const COVER_THEMES = {
+            blue: {
+                primary: '#0078D4',
+                logoOuter: '#3870C0',
+                topicBorder: '#C7E0F4',
+                topicBg: 'rgba(239, 246, 252, 0.6)',
+                marksHeaderBg: '#EFF6FC',
+                marksHeaderText: '#0078D4',
+            },
+            mono: {
+                primary: '#1A1A1A',
+                logoOuter: '#1A1A1A',
+                topicBorder: '#8A8886',
+                topicBg: '#FAF9F8',
+                marksHeaderBg: '#F3F2F1',
+                marksHeaderText: '#1A1A1A',
+            },
+            emerald: {
+                primary: '#107C41',
+                logoOuter: '#107C41',
+                topicBorder: '#9FD89F',
+                topicBg: 'rgba(223, 246, 221, 0.55)',
+                marksHeaderBg: '#DFF6DD',
+                marksHeaderText: '#107C41',
+            }
+        };
+
+        let lastAutoCoverType = null;
+
+        function applyCoverCoursePreset(selectEl) {
+            if (!selectEl || !selectEl.value) {
+                return;
+            }
+            const opt = selectEl.options[selectEl.selectedIndex];
+            const codeEl = document.getElementById('coverCourseCode');
+            const titleEl = document.getElementById('coverCourseTitle');
+            if (codeEl) {
+                codeEl.value = selectEl.value;
+            }
+            if (titleEl && opt && opt.dataset.title) {
+                titleEl.value = opt.dataset.title;
+            }
+            updateCoverPreview();
+        }
+
+        function applyCoverFacultyPreset(selectEl) {
+            if (!selectEl || !selectEl.value) {
+                return;
+            }
+            const opt = selectEl.options[selectEl.selectedIndex];
+            const nameEl = document.getElementById('coverTeacherName');
+            const desigEl = document.getElementById('coverTeacherDesignation');
+            if (nameEl && opt && opt.dataset.name) {
+                nameEl.value = opt.dataset.name;
+            }
+            if (desigEl && opt && opt.dataset.designation) {
+                desigEl.value = opt.dataset.designation;
+            }
+            updateCoverPreview();
+        }
+
+        function toggleSubmissionMode() {
+            const selected = document.querySelector('input[name="submission_mode"]:checked');
+            const mode = selected ? selected.value : 'individual';
+            const indivFields = document.getElementById('individualStudentFields');
+            const groupSection = document.getElementById('groupMembersSection');
+            const indivPreview = document.getElementById('previewIndividualBlock');
+            const groupPreview = document.getElementById('previewGroupBlock');
+
+            if (mode === 'group') {
+                if (indivFields) indivFields.classList.add('hidden');
+                if (groupSection) groupSection.classList.remove('hidden');
+                if (indivPreview) indivPreview.classList.add('hidden');
+                if (groupPreview) groupPreview.classList.remove('hidden');
+                const list = document.getElementById('groupMembersList');
+                if (list && list.children.length === 0) {
+                    addGroupMemberRow('Md. Rakibul Islam', '241-35-001');
+                    addGroupMemberRow('Nusrat Jahan', '241-35-002');
+                }
+            } else {
+                if (indivFields) indivFields.classList.remove('hidden');
+                if (groupSection) groupSection.classList.add('hidden');
+                if (indivPreview) indivPreview.classList.remove('hidden');
+                if (groupPreview) groupPreview.classList.add('hidden');
+            }
+            updateCoverPreview();
+        }
+
+        function addGroupMemberRow(defaultName = '', defaultId = '') {
+            const list = document.getElementById('groupMembersList');
+            if (!list) {
+                return;
+            }
+            const row = document.createElement('div');
+            row.className = 'group-member-row grid grid-cols-12 gap-2 items-center';
+
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.placeholder = 'Member Name';
+            nameInput.value = defaultName;
+            nameInput.className = 'group-member-name col-span-6 bg-white border border-[#E1DFDD] rounded-[4px] px-2 py-1 text-xs text-[#323130] focus:outline-none focus:border-[#0078D4]';
+            nameInput.addEventListener('input', updateCoverPreview);
+
+            const idInput = document.createElement('input');
+            idInput.type = 'text';
+            idInput.placeholder = 'Student ID (e.g. 241-35-001)';
+            idInput.value = defaultId;
+            idInput.className = 'group-member-id col-span-5 bg-white border border-[#E1DFDD] rounded-[4px] px-2 py-1 text-xs font-mono text-[#323130] focus:outline-none focus:border-[#0078D4]';
+            idInput.addEventListener('input', updateCoverPreview);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.textContent = '×';
+            removeBtn.title = 'Remove Member';
+            removeBtn.className = 'col-span-1 text-xs font-bold text-[#A80000] hover:bg-[#FDE7E9] rounded py-1 cursor-pointer';
+            removeBtn.addEventListener('click', function() {
+                removeGroupMemberRow(removeBtn);
+            });
+
+            row.appendChild(nameInput);
+            row.appendChild(idInput);
+            row.appendChild(removeBtn);
+            list.appendChild(row);
+            updateCoverPreview();
+        }
+
+        function removeGroupMemberRow(btn) {
+            const list = document.getElementById('groupMembersList');
+            const row = btn ? btn.closest('.group-member-row') : null;
+            if (row && list && list.children.length > 1) {
+                row.remove();
+                updateCoverPreview();
+            }
+        }
+
+        function formatCoverDate(isoDate) {
+            if (!isoDate) {
+                return '';
+            }
+            const parts = isoDate.split('-');
+            if (parts.length !== 3) {
+                return isoDate;
+            }
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const year = parts[0];
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            const day = parts[2].padStart(2, '0');
+            return `${day} ${months[monthIdx] || parts[1]} ${year}`;
+        }
+
+        function updateCoverPreview() {
+            const form = document.getElementById('coverPageForm');
+            if (!form) {
+                return;
+            }
+
+            const typeRadio = document.querySelector('input[name="cover_type"]:checked');
+            const coverType = typeRadio ? typeRadio.value : 'lab_report';
+            const tpl = COVER_TEMPLATE_META[coverType] || COVER_TEMPLATE_META.lab_report;
+
+            const docNumLabelEl = document.getElementById('coverDocNumberLabel');
+            const docTitleLabelEl = document.getElementById('coverDocTitleLabel');
+            const docNumInput = document.getElementById('coverDocNumber');
+            const docTitleInput = document.getElementById('coverDocTitle');
+
+            if (docNumLabelEl) docNumLabelEl.textContent = tpl.numLabel;
+            if (docTitleLabelEl) docTitleLabelEl.textContent = tpl.titleLabel;
+
+            if (lastAutoCoverType !== coverType) {
+                const knownNums = Object.values(COVER_TEMPLATE_META).map(m => m.numDefault);
+                const knownTitles = Object.values(COVER_TEMPLATE_META).map(m => m.titleDefault);
+                if (docNumInput && (lastAutoCoverType !== null && knownNums.includes(docNumInput.value.trim()))) {
+                    docNumInput.value = tpl.numDefault;
+                }
+                if (docTitleInput && (lastAutoCoverType !== null && knownTitles.includes(docTitleInput.value.trim()))) {
+                    docTitleInput.value = tpl.titleDefault;
+                }
+                lastAutoCoverType = coverType;
+            }
+
+            const bannerEl = document.getElementById('previewCoverBanner');
+            if (bannerEl) bannerEl.textContent = tpl.banner;
+
+            const code = (document.getElementById('coverCourseCode')?.value || '').trim().toUpperCase();
+            const title = (document.getElementById('coverCourseTitle')?.value || '').trim();
+            const courseLine = [code, title].filter(Boolean).join(': ') || 'Course Code & Title';
+            const previewCourseLine = document.getElementById('previewCourseLine');
+            if (previewCourseLine) previewCourseLine.textContent = courseLine;
+
+            const docNumberEl = document.getElementById('previewDocNumber');
+            const docTitleEl = document.getElementById('previewDocTitle');
+            if (docNumberEl) docNumberEl.textContent = (docNumInput?.value || '').trim() || tpl.numDefault;
+            if (docTitleEl) docTitleEl.textContent = (docTitleInput?.value || '').trim() || tpl.titleDefault;
+
+            const teacherName = (document.getElementById('coverTeacherName')?.value || '').trim();
+            const teacherDesig = (document.getElementById('coverTeacherDesignation')?.value || '').trim();
+            const pTeacherName = document.getElementById('previewTeacherName');
+            const pTeacherDesig = document.getElementById('previewTeacherDesignation');
+            if (pTeacherName) pTeacherName.textContent = teacherName || 'Course Teacher';
+            if (pTeacherDesig) pTeacherDesig.textContent = teacherDesig || 'Faculty Member';
+
+            const studentName = (document.getElementById('coverStudentName')?.value || '').trim();
+            const studentId = (document.getElementById('coverStudentId')?.value || '').trim();
+            const batch = (document.getElementById('coverBatch')?.value || '').trim();
+            const section = (document.getElementById('coverSection')?.value || '').trim().toUpperCase();
+            const program = (document.getElementById('coverProgram')?.value || '').trim();
+            const semester = (document.getElementById('coverSemester')?.value || '').trim();
+
+            const batchSecLabel = section ? `${batch || '—'} (Section ${section})` : (batch || '—');
+
+            const pStudentName = document.getElementById('previewStudentName');
+            const pStudentId = document.getElementById('previewStudentId');
+            const pBatchSec = document.getElementById('previewBatchSec');
+            const pProgram = document.getElementById('previewProgram');
+            const pSemester = document.getElementById('previewSemester');
+
+            if (pStudentName) pStudentName.textContent = studentName || 'Student Name';
+            if (pStudentId) pStudentId.textContent = studentId || 'Student ID';
+            if (pBatchSec) pBatchSec.textContent = batchSecLabel;
+            if (pProgram) pProgram.textContent = program || 'B.Sc. in SWE';
+            if (pSemester) pSemester.textContent = semester || 'Fall 2026';
+
+            const groupTbody = document.getElementById('previewGroupRows');
+            if (groupTbody) {
+                groupTbody.innerHTML = '';
+                document.querySelectorAll('#groupMembersList .group-member-row').forEach(row => {
+                    const mName = (row.querySelector('.group-member-name')?.value || '').trim() || '—';
+                    const mId = (row.querySelector('.group-member-id')?.value || '').trim() || '—';
+                    const tr = document.createElement('tr');
+                    const tdName = document.createElement('td');
+                    tdName.className = 'border border-[#D2D0CE] px-1.5 py-1 font-medium text-[#201F1E]';
+                    tdName.textContent = mName;
+                    const tdId = document.createElement('td');
+                    tdId.className = 'border border-[#D2D0CE] px-1.5 py-1 font-mono text-[#323130]';
+                    tdId.textContent = mId;
+                    tr.appendChild(tdName);
+                    tr.appendChild(tdId);
+                    groupTbody.appendChild(tr);
+                });
+            }
+            const pGroupBatchSec = document.getElementById('previewGroupBatchSec');
+            const pGroupSem = document.getElementById('previewGroupSemester');
+            if (pGroupBatchSec) pGroupBatchSec.textContent = batchSecLabel;
+            if (pGroupSem) pGroupSem.textContent = semester || 'Fall 2026';
+
+            const subDate = document.getElementById('coverSubmissionDate')?.value || '';
+            const pSubDate = document.getElementById('previewSubmissionDate');
+            if (pSubDate) pSubDate.textContent = formatCoverDate(subDate) || '—';
+
+            const includeMarks = document.getElementById('coverIncludeMarks')?.checked ?? true;
+            const marksSection = document.getElementById('previewMarksSection');
+            if (marksSection) {
+                marksSection.classList.toggle('hidden', !includeMarks);
+            }
+
+            const includeBorder = document.getElementById('coverIncludeBorder')?.checked ?? true;
+            const outerFrame = document.getElementById('coverOuterFrame');
+            const themeKey = document.getElementById('coverThemeSelect')?.value || 'blue';
+            const theme = COVER_THEMES[themeKey] || COVER_THEMES.blue;
+
+            if (outerFrame) {
+                if (includeBorder) {
+                    outerFrame.style.borderStyle = 'double';
+                    outerFrame.style.borderWidth = '4px';
+                    outerFrame.style.borderColor = theme.primary;
+                } else {
+                    outerFrame.style.borderWidth = '0px';
+                    outerFrame.style.borderStyle = 'none';
+                }
+            }
+
+            const logoOuter = document.getElementById('coverLogoOuter');
+            const logoTri = document.getElementById('coverLogoTriangle');
+            const univName = document.getElementById('previewUniversityName');
+            const divider = document.getElementById('coverHeaderDivider');
+            const topicBox = document.getElementById('previewTopicBox');
+            const marksHeader = document.getElementById('previewMarksHeader');
+            const subToTitle = document.getElementById('previewSubmittedToTitle');
+            const subByTitle = document.getElementById('previewSubmittedByTitle');
+
+            if (logoOuter) logoOuter.setAttribute('fill', theme.logoOuter);
+            if (logoTri) logoTri.setAttribute('fill', theme.logoOuter);
+            if (univName) univName.style.color = theme.primary;
+            if (divider) divider.style.backgroundColor = theme.primary;
+            if (bannerEl) bannerEl.style.backgroundColor = theme.primary;
+            if (docNumberEl) docNumberEl.style.color = theme.primary;
+            if (subToTitle) subToTitle.style.color = theme.primary;
+            if (subByTitle) subByTitle.style.color = theme.primary;
+            if (topicBox) {
+                topicBox.style.borderColor = theme.topicBorder;
+                topicBox.style.backgroundColor = theme.topicBg;
+            }
+            if (marksHeader) {
+                marksHeader.style.backgroundColor = theme.marksHeaderBg;
+                marksHeader.style.color = theme.marksHeaderText;
+            }
+        }
+
+        function saveStudentPrefs() {
+            try {
+                const prefs = {
+                    name: document.getElementById('coverStudentName')?.value || '',
+                    id: document.getElementById('coverStudentId')?.value || '',
+                    batch: document.getElementById('coverBatch')?.value || '',
+                    section: document.getElementById('coverSection')?.value || '',
+                    semester: document.getElementById('coverSemester')?.value || '',
+                };
+                localStorage.setItem(COVER_PREFS_STORAGE_KEY, JSON.stringify(prefs));
+            } catch (e) {
+                // Ignore storage quota / private mode failures
+            }
+        }
+
+        function loadStudentPrefs() {
+            try {
+                const raw = localStorage.getItem(COVER_PREFS_STORAGE_KEY);
+                if (!raw) {
+                    return;
+                }
+                const prefs = JSON.parse(raw);
+                if (prefs.name && document.getElementById('coverStudentName')) document.getElementById('coverStudentName').value = prefs.name;
+                if (prefs.id && document.getElementById('coverStudentId')) document.getElementById('coverStudentId').value = prefs.id;
+                if (prefs.batch && document.getElementById('coverBatch')) document.getElementById('coverBatch').value = prefs.batch;
+                if (prefs.section && document.getElementById('coverSection')) document.getElementById('coverSection').value = prefs.section;
+                if (prefs.semester && document.getElementById('coverSemester')) document.getElementById('coverSemester').value = prefs.semester;
+            } catch (e) {
+                // Ignore malformed storage values
+            }
+        }
+
+        function resetCoverForm() {
+            try {
+                localStorage.removeItem(COVER_PREFS_STORAGE_KEY);
+            } catch (e) {}
+            const labRadio = document.getElementById('coverType_lab_report');
+            if (labRadio) labRadio.checked = true;
+            if (document.getElementById('coverCourseCode')) document.getElementById('coverCourseCode').value = 'SE215';
+            if (document.getElementById('coverCourseTitle')) document.getElementById('coverCourseTitle').value = 'Algorithms Design & Analysis Lab';
+            if (document.getElementById('coverDocNumber')) document.getElementById('coverDocNumber').value = 'Experiment No. 01';
+            if (document.getElementById('coverDocTitle')) document.getElementById('coverDocTitle').value = 'Asymptotic Complexity & Divide-and-Conquer Sorting';
+            if (document.getElementById('coverSemester')) document.getElementById('coverSemester').value = 'Fall 2026';
+            if (document.getElementById('coverTeacherName')) document.getElementById('coverTeacherName').value = 'Dr. Md. Abdul Kader';
+            if (document.getElementById('coverTeacherDesignation')) document.getElementById('coverTeacherDesignation').value = 'Associate Professor';
+            if (document.getElementById('coverStudentName')) document.getElementById('coverStudentName').value = 'Md. Rakibul Islam';
+            if (document.getElementById('coverStudentId')) document.getElementById('coverStudentId').value = '241-35-001';
+            if (document.getElementById('coverBatch')) document.getElementById('coverBatch').value = '45';
+            if (document.getElementById('coverSection')) document.getElementById('coverSection').value = 'A';
+            if (document.getElementById('coverProgram')) document.getElementById('coverProgram').value = 'B.Sc. in SWE';
+            if (document.getElementById('coverThemeSelect')) document.getElementById('coverThemeSelect').value = 'blue';
+            if (document.getElementById('coverIncludeMarks')) document.getElementById('coverIncludeMarks').checked = true;
+            if (document.getElementById('coverIncludeBorder')) document.getElementById('coverIncludeBorder').checked = true;
+            const indivRadio = document.querySelector('input[name="submission_mode"][value="individual"]');
+            if (indivRadio) indivRadio.checked = true;
+            toggleSubmissionMode();
+        }
+
+        function printCoverPage() {
+            updateCoverPreview();
+            window.print();
+        }
+
+        function exportCoverPageImage() {
+            const sheet = document.getElementById('coverPageSheet');
+            if (!sheet) {
+                return;
+            }
+            if (typeof html2canvas === 'undefined') {
+                showToast('Image capture library failed to load. Use Print / Save PDF instead.', 'error');
+                return;
+            }
+
+            updateCoverPreview();
+
+            const clone = sheet.cloneNode(true);
+            clone.style.position = 'fixed';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.width = '794px';
+            clone.style.minHeight = '1123px';
+            clone.style.boxShadow = 'none';
+            document.body.appendChild(clone);
+
+            html2canvas(clone, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#FFFFFF',
+                width: 794,
+                windowWidth: 794,
+            }).then(canvas => {
+                clone.remove();
+                const typeRadio = document.querySelector('input[name="cover_type"]:checked');
+                const coverType = typeRadio ? typeRadio.value : 'cover_page';
+                const courseCode = (document.getElementById('coverCourseCode')?.value || 'DIU_SWE').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+                const link = document.createElement('a');
+                link.download = `${courseCode}_${coverType}_cover_page.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast('A4 Cover Page PNG downloaded!', 'success');
+            }).catch(err => {
+                clone.remove();
+                console.error('Cover page export error:', err);
+                showToast('Could not generate PNG. Please use Print / Save PDF.', 'error');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('coverPageForm')) {
+                loadStudentPrefs();
+                updateCoverPreview();
+            }
+        });
 
         // Close on Escape or click on backdrop
         document.addEventListener('keydown', function(e) {

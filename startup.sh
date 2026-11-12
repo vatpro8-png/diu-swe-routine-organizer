@@ -10,6 +10,7 @@ cp /home/site/wwwroot/production.env /home/site/wwwroot/.env
 # Ensure storage directories exist and are fully writable
 mkdir -p /home/site/wwwroot/storage/framework/{sessions,views,cache}
 mkdir -p /home/site/wwwroot/storage/logs
+mkdir -p /home/site/wwwroot/storage/app/private/exam-sheets
 mkdir -p /home/site/wwwroot/bootstrap/cache
 mkdir -p /home/site/wwwroot/database
 

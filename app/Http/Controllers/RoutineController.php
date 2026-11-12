@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\AcademicRoutine;
 use App\Models\CourseOffering;
+use App\Models\ExamRoutine;
+use App\Models\ExamSheet;
 use App\Services\CourseIntegrationService;
 use App\Services\FacultyService;
 use Illuminate\Http\JsonResponse;
@@ -50,6 +52,10 @@ class RoutineController extends Controller
             $activeTab = 'empty_rooms';
         } elseif ($courseSearch && ! $request->has('tab')) {
             $activeTab = 'custom';
+        } elseif ($request->has('exam_type') && ! $request->has('tab')) {
+            $activeTab = 'exam_routine';
+        } elseif ($request->has('cover_type') && ! $request->has('tab')) {
+            $activeTab = 'cover_page';
         }
 
         // 1. Core Batch & Section Routine Query (Database-Agnostic Day Sorting)
@@ -223,6 +229,55 @@ class RoutineController extends Controller
         $dedicatedRooms = AcademicRoutine::SWE_DEDICATED_ROOMS;
         $facultyDirectory = FacultyService::all();
 
+        // 6. Exam Routine (Midterm & Final) & Exam Sheet Browser
+        $examType = ExamRoutine::normalizeExamType($request->input('exam_type', 'Midterm'));
+        $examBatch = $request->filled('exam_batch') ? (int) $request->input('exam_batch') : null;
+        $examSearch = $request->filled('exam_search') ? trim((string) $request->input('exam_search')) : null;
+        $examViewMode = in_array($request->input('exam_view_mode'), ['schedule', 'sheet'], true)
+            ? (string) $request->input('exam_view_mode')
+            : 'schedule';
+
+        $examCounts = [
+            'Midterm' => ExamRoutine::where('exam_type', 'Midterm')->count(),
+            'Final' => ExamRoutine::where('exam_type', 'Final')->count(),
+        ];
+
+        $activeExamSheet = null;
+        $examRoutines = collect();
+        if ($activeTab === 'exam_routine') {
+            $activeExamSheet = ExamSheet::where('exam_type', $examType)->latest('id')->first();
+            $examQuery = ExamRoutine::query()->forExamType($examType);
+            if ($examBatch !== null && $examBatch > 0) {
+                $examQuery->where('batch', $examBatch);
+            }
+            if ($examSearch !== null && $examSearch !== '') {
+                $like = '%'.$examSearch.'%';
+                $examQuery->where(function ($q) use ($like): void {
+                    $q->where('course_code', 'LIKE', $like)
+                        ->orWhere('course_name', 'LIKE', $like)
+                        ->orWhere('room_no', 'LIKE', $like)
+                        ->orWhere('section', 'LIKE', $like)
+                        ->orWhere('teacher_initials', 'LIKE', $like)
+                        ->orWhere('exam_date', 'LIKE', $like);
+                });
+            }
+            $examRoutines = $examQuery
+                ->orderBy('exam_date')
+                ->orderBy('time_slot')
+                ->orderBy('batch')
+                ->orderBy('course_code')
+                ->get();
+        }
+
+        // 7. Assignment & Report Cover Page Generator
+        $allowedCoverTypes = ['lab_report', 'final_lab_report', 'theory_assessment', 'assignment'];
+        $coverType = in_array($request->input('cover_type'), $allowedCoverTypes, true)
+            ? (string) $request->input('cover_type')
+            : 'lab_report';
+        $coverCourses = $activeTab === 'cover_page'
+            ? CourseOffering::orderByDesc('batch')->orderBy('course_code')->get()
+            : collect();
+
         return view('routine_dashboard', compact(
             'routines',
             'weeklyGrid',
@@ -261,7 +316,16 @@ class RoutineController extends Controller
             'days',
             'dedicatedRooms',
             'activeTab',
-            'facultyDirectory'
+            'facultyDirectory',
+            'examType',
+            'examBatch',
+            'examSearch',
+            'examViewMode',
+            'examCounts',
+            'activeExamSheet',
+            'examRoutines',
+            'coverType',
+            'coverCourses'
         ));
     }
 

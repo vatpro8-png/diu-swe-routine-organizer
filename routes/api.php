@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExamRoutineController;
 use App\Http\Controllers\RoutineController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,4 +21,6 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/custom-routine/clear', [RoutineController::class, 'clearCustomRoutine'])->name('api.v1.custom.clear');
     Route::get('/empty-rooms', [RoutineController::class, 'emptyRooms'])->name('api.v1.empty-rooms');
     Route::get('/course-offerings', [RoutineController::class, 'apiOfferings'])->name('api.v1.offerings');
+    Route::get('/exam-routine', [ExamRoutineController::class, 'apiIndex'])->name('api.v1.exam-routine');
+    Route::get('/exam-analytics', [ExamRoutineController::class, 'apiAnalytics'])->name('api.v1.exam-analytics');
 });

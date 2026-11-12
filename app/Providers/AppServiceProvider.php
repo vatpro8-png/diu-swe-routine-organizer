@@ -83,11 +83,19 @@ class AppServiceProvider extends ServiceProvider
 
         // 3. Auto-migrate and seed if tables are missing or empty
         try {
-            if (! Schema::hasTable('course_offerings') || ! Schema::hasTable('academic_routines')) {
+            if (
+                ! Schema::hasTable('course_offerings')
+                || ! Schema::hasTable('academic_routines')
+                || ! Schema::hasTable('exam_sheets')
+                || ! Schema::hasTable('exam_routines')
+                || ! Schema::hasTable('exam_form_templates')
+            ) {
                 Artisan::call('migrate', ['--force' => true]);
             }
             if (Schema::hasTable('academic_routines') && DB::table('academic_routines')->count() === 0) {
                 Artisan::call('db:seed', ['--force' => true]);
+            } elseif (Schema::hasTable('exam_form_templates') && DB::table('exam_form_templates')->count() === 0) {
+                Artisan::call('db:seed', ['--class' => 'ExamFormTemplateSeeder', '--force' => true]);
             }
         } catch (\Throwable $e) {
             Log::error('Database auto-initialization error: '.$e->getMessage());

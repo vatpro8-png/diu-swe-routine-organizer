@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CourseOfferingSeeder::class,
             AcademicRoutineSeeder::class,
+            ExamFormTemplateSeeder::class,
         ]);
     }
 }
