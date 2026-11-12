@@ -6,7 +6,7 @@ name: Build and deploy PHP app to Azure Web App - diusweroutine
 on:
   push:
     branches:
-      - main
+      - 'main'
   workflow_dispatch:
 
 jobs:
@@ -21,8 +21,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_mysql, bcmath, curl, zip
+          php-version: '8.5'
 
       - name: Check if composer.json exists
         id: check_files
@@ -32,31 +31,14 @@ jobs:
 
       - name: Run composer install if composer.json exists
         if: steps.check_files.outputs.files_exists == 'true'
-        run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install NPM dependencies and build Vite assets
-        run: |
-          npm ci
-          npm run build
-
-      - name: Clean up heavy non-production directories and prepare env
-        run: |
-          rm -rf node_modules
-          rm -rf .git
-          cp production.env .env
-          chmod +x startup.sh
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: php-app
           path: .
-          include-hidden-files: true
 
   deploy:
     runs-on: ubuntu-latest
@@ -74,9 +56,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1E9F23539B8245DABDE147A53FF3DA38 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_22015BB96E9F46D19CD6D02DB9B73F3A }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8390355B076D43068FDFB1539531747D }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_29FC181928434D328FFC6E8108155063 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2975AA67E5414A3F9AB0F71D7195E518 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_75598A5C06B94A049A0F859F7FD6FC21 }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
@@ -85,3 +67,4 @@ jobs:
           app-name: 'diusweroutine'
           slot-name: 'Production'
           package: .
+          
