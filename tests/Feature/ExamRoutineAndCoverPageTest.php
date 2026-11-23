@@ -279,6 +279,8 @@ class ExamRoutineAndCoverPageTest extends TestCase
         $response->assertSee('Quick-Fill SWE Faculty Member');
         $response->assertSee('Download Word (.doc)');
         $response->assertSee('exportCoverPageDoc');
+        $response->assertSee('Daffodil Smart City, Birulia, Dhaka');
+        $response->assertDontSee('Ashulia');
 
         $deepLink = $this->get('/?cover_type=theory_assessment');
         $deepLink->assertStatus(200);

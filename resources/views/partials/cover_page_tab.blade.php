@@ -115,7 +115,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         <div>
                             <label for="coverSemester" class="block text-xs font-semibold text-[#323130] mb-1">Semester</label>
-                            <input id="coverSemester" type="text" value="Fall 2026" oninput="saveStudentPrefs(); updateCoverPreview()" class="w-full bg-white border border-[#E1DFDD] rounded-[4px] px-2.5 py-1.5 text-xs text-[#323130] focus:outline-none focus:border-[#0078D4]">
+                            <input id="coverSemester" type="text" value="Fall 2026" oninput="saveCoverContext(); updateCoverPreview()" class="w-full bg-white border border-[#E1DFDD] rounded-[4px] px-2.5 py-1.5 text-xs text-[#323130] focus:outline-none focus:border-[#0078D4]">
                         </div>
                         <div>
                             <label for="coverSubmissionDate" class="block text-xs font-semibold text-[#323130] mb-1">Date of Submission</label>
@@ -178,11 +178,11 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             <div>
                                 <label for="coverStudentName" class="block text-xs font-semibold text-[#323130] mb-1">Student Name</label>
-                                <input id="coverStudentName" type="text" value="Md. Rakibul Islam" autocomplete="name" oninput="saveStudentPrefs(); updateCoverPreview()" class="w-full bg-white border border-[#E1DFDD] rounded-[4px] px-2.5 py-1.5 text-xs text-[#323130] focus:outline-none focus:border-[#0078D4]">
+                                <input id="coverStudentName" type="text" value="Md. Rakibul Islam" autocomplete="name" oninput="saveCoverContext(); updateCoverPreview()" class="w-full bg-white border border-[#E1DFDD] rounded-[4px] px-2.5 py-1.5 text-xs text-[#323130] focus:outline-none focus:border-[#0078D4]">
                             </div>
                             <div>
                                 <label for="coverStudentId" class="block text-xs font-semibold text-[#323130] mb-1">Student ID</label>
-                                <input id="coverStudentId" type="text" value="241-35-001" autocorrect="off" oninput="saveStudentPrefs(); updateCoverPreview()" class="w-full bg-white border border-[#E1DFDD] rounded-[4px] px-2.5 py-1.5 text-xs font-mono text-[#323130] focus:outline-none focus:border-[#0078D4]">
+                                <input id="coverStudentId" type="text" value="241-35-001" autocorrect="off" oninput="saveCoverContext(); updateCoverPreview()" class="w-full bg-white border border-[#E1DFDD] rounded-[4px] px-2.5 py-1.5 text-xs font-mono text-[#323130] focus:outline-none focus:border-[#0078D4]">
                             </div>
                         </div>
                     </div>
@@ -197,11 +197,11 @@
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                         <div>
                             <label for="coverBatch" class="block text-xs font-semibold text-[#323130] mb-1">Batch</label>
-                            <input id="coverBatch" type="text" value="45" oninput="saveStudentPrefs(); updateCoverPreview()" class="w-full bg-white border border-[#E1DFDD] rounded-[4px] px-2.5 py-1.5 text-xs text-[#323130] focus:outline-none focus:border-[#0078D4]">
+                            <input id="coverBatch" type="text" value="45" oninput="saveCoverContext(); updateCoverPreview()" class="w-full bg-white border border-[#E1DFDD] rounded-[4px] px-2.5 py-1.5 text-xs text-[#323130] focus:outline-none focus:border-[#0078D4]">
                         </div>
                         <div>
                             <label for="coverSection" class="block text-xs font-semibold text-[#323130] mb-1">Section</label>
-                            <input id="coverSection" type="text" value="A" oninput="saveStudentPrefs(); updateCoverPreview()" class="w-full bg-white border border-[#E1DFDD] rounded-[4px] px-2.5 py-1.5 text-xs uppercase text-[#323130] focus:outline-none focus:border-[#0078D4]">
+                            <input id="coverSection" type="text" value="A" oninput="saveCoverContext(); updateCoverPreview()" class="w-full bg-white border border-[#E1DFDD] rounded-[4px] px-2.5 py-1.5 text-xs uppercase text-[#323130] focus:outline-none focus:border-[#0078D4]">
                         </div>
                         <div class="col-span-2 sm:col-span-1">
                             <label for="coverProgram" class="block text-xs font-semibold text-[#323130] mb-1">Program</label>
@@ -255,10 +255,11 @@
             </div>
 
             <!-- A4 Portrait Sheet Container -->
-            <div class="w-full overflow-x-auto pb-2 flex justify-center">
-                <div id="coverPageSheet"
-                     class="bg-white text-[#1A1A1A] shadow-[0_6.4px_14.4px_0_rgba(0,0,0,0.132)] shrink-0 relative flex flex-col justify-between"
-                     style="width: 794px; height: 1123px; min-height: 1123px; overflow: hidden; padding: 48px 54px; font-family: 'Segoe UI', 'Plus Jakarta Sans', Georgia, serif; box-sizing: border-box;">
+            <div id="coverPreviewViewport" class="w-full overflow-hidden pb-2 flex justify-center items-start">
+                <div id="coverPreviewScaler" class="shrink-0">
+                    <div id="coverPageSheet"
+                         class="bg-white text-[#1A1A1A] shadow-[0_6.4px_14.4px_0_rgba(0,0,0,0.132)] shrink-0 relative flex flex-col justify-between mx-auto"
+                         style="width: 794px; height: 1123px; min-height: 1123px; overflow: hidden; padding: 48px 54px; font-family: 'Segoe UI', 'Plus Jakarta Sans', Georgia, serif; box-sizing: border-box;">
 
                     <!-- Outer Page Frame -->
                     <div id="coverOuterFrame" class="flex-1 flex flex-col justify-between p-8 border-2 border-[#0078D4]" style="height: 100%; min-height: 0; box-sizing: border-box; border-style: double; border-width: 4px;">
@@ -286,7 +287,7 @@
                                 Department of Software Engineering (SWE)
                             </div>
                             <div class="text-[12px] font-medium text-[#605E5C]">
-                                Faculty of Science &amp; Information Technology • Daffodil Smart City, Ashulia, Dhaka
+                                Faculty of Science &amp; Information Technology • Daffodil Smart City, Birulia, Dhaka
                             </div>
 
                             <div id="coverHeaderDivider" class="mx-auto w-48 h-0.5 bg-[#0078D4] mt-3"></div>
@@ -297,6 +298,7 @@
                             <div class="inline-block">
                                 <div id="previewCoverBanner" class="px-8 py-2.5 rounded-[4px] bg-[#0078D4] text-white text-[20px] font-black tracking-[0.14em] uppercase">
                                     LAB REPORT
+                                </div>
                                 </div>
                             </div>
 

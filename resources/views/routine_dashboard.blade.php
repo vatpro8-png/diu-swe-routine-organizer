@@ -321,6 +321,17 @@
                 border: none !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
+                transform: none !important;
+            }
+            #coverPreviewViewport {
+                width: 210mm !important;
+                height: 297mm !important;
+                margin: 0 auto !important;
+                overflow: visible !important;
+            }
+            #coverPreviewScaler {
+                width: 210mm !important;
+                height: 297mm !important;
             }
             #coverOuterFrame {
                 height: 100% !important;
@@ -898,7 +909,7 @@
                 <div class="flex items-center gap-2.5">
                     <span class="font-bold tracking-tight text-white flex items-center gap-1.5">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                        <span>Daffodil Smart City (DSC), Ashulia</span>
+                        <span>Daffodil Smart City (DSC), Birulia</span>
                     </span>
                     <span class="hidden md:inline text-sky-200">|</span>
                     <span class="hidden md:inline text-sky-100 font-medium">Faculty of Science & Information Technology (FSIT)</span>
@@ -933,7 +944,7 @@
                                 </span>
                             </div>
                             <p class="text-[11px] text-[#605E5C] truncate mt-0.5">
-                                Daffodil International University • Dept of SWE • Ashulia Smart City
+                                Daffodil International University • Dept of SWE • Birulia Smart City
                             </p>
                         </div>
                     </div>
@@ -1131,7 +1142,7 @@
                                     </div>
                                     <div class="text-right text-[10px] leading-tight">
                                         <div class="font-mono text-white font-bold">Effective: October 10, 2026</div>
-                                        <div class="text-[#EFF6FC] text-[9.5px]">Ashulia Smart City (DSC) • A4 Landscape</div>
+                                        <div class="text-[#EFF6FC] text-[9.5px]">Birulia Smart City (DSC) • A4 Landscape</div>
                                     </div>
                                 </div>
 
@@ -1576,7 +1587,7 @@
                                             </div>
                                             <div class="text-right text-[10px] leading-tight">
                                                 <div class="font-mono text-white font-bold">{{ $facultyRoutines->flatten(1)->count() }} Classes / Week</div>
-                                                <div class="text-[#EFF6FC] text-[9.5px]">Ashulia Smart City (DSC) • A4 Landscape</div>
+                                                <div class="text-[#EFF6FC] text-[9.5px]">Birulia Smart City (DSC) • A4 Landscape</div>
                                             </div>
                                         </div>
 
@@ -2090,7 +2101,7 @@
                                         </div>
                                         <div class="text-right text-[10px] leading-tight">
                                             <div class="font-mono text-white font-bold">Personalized Routine</div>
-                                            <div class="text-[#EFF6FC] text-[9.5px]">Ashulia Smart City (DSC) • A4 Landscape</div>
+                                            <div class="text-[#EFF6FC] text-[9.5px]">Birulia Smart City (DSC) • A4 Landscape</div>
                                         </div>
                                     </div>
                                     <div class="overflow-x-auto shadow-inner">
@@ -2465,7 +2476,7 @@
                                 </span>
                             </div>
                             <p class="text-xs text-[#605E5C] leading-relaxed">
-                                Department of Software Engineering • Faculty of Science &amp; Information Technology (FSIT), Daffodil International University, Ashulia Smart City.
+                                Department of Software Engineering • Faculty of Science &amp; Information Technology (FSIT), Daffodil International University, Birulia Smart City.
                             </p>
                             <div class="text-[11px] text-[#605E5C]">
                                 <span>Academic Session: <strong>Fall 2026</strong></span> • <span>Effective: <strong>October 10, 2026</strong></span>
@@ -2515,7 +2526,7 @@
                             &copy; {{ date('Y') }} <strong>Department of Software Engineering</strong> • Daffodil International University (DIU).
                         </div>
                         <div class="text-[10px] text-[#8A8886]">
-                            Ashulia Smart City Campus • All schedules subject to Routine Committee updates
+                            Birulia Smart City Campus • All schedules subject to Routine Committee updates
                         </div>
                     </div>
                 </div>
@@ -2685,7 +2696,7 @@
                 facultyInitEl.textContent = d.teacherInitials || '';
                 designationEl.textContent = d.teacherDesignation || 'Dept. of Software Engineering';
                 roomEl.textContent = 'Room ' + (d.room || 'TBD');
-                buildingEl.textContent = d.building || 'Ashulia';
+                buildingEl.textContent = d.building || 'Birulia';
                 batchSectionEl.textContent = 'Batch ' + (d.batch || '') + ' • Section ' + (d.section || '');
                 timeSlotEl.textContent = (d.day ? d.day + ' ' : '') + (d.slot || '');
 
@@ -3086,7 +3097,8 @@
         }
 
         // Assignment & Academic Cover Page Studio Logic
-        const COVER_PREFS_STORAGE_KEY = 'diu_swe_cover_student_prefs_v1';
+        const COVER_PREFS_STORAGE_KEY = 'diu_swe_cover_context_v2';
+        const LEGACY_COVER_PREFS_STORAGE_KEY = 'diu_swe_cover_student_prefs_v1';
 
         const COVER_TEMPLATE_META = {
             lab_report: {
@@ -3421,33 +3433,99 @@
             }
         }
 
-        function saveStudentPrefs() {
+        function saveCoverContext() {
             try {
-                const prefs = {
+                const groupMembers = Array.from(document.querySelectorAll('#groupMembersList .group-member-row')).map(row => ({
+                    name: row.querySelector('.group-member-name')?.value || '',
+                    id: row.querySelector('.group-member-id')?.value || '',
+                }));
+                const context = {
                     name: document.getElementById('coverStudentName')?.value || '',
                     id: document.getElementById('coverStudentId')?.value || '',
                     batch: document.getElementById('coverBatch')?.value || '',
                     section: document.getElementById('coverSection')?.value || '',
                     semester: document.getElementById('coverSemester')?.value || '',
+                    coverType: document.querySelector('input[name="cover_type"]:checked')?.value || 'lab_report',
+                    courseCode: document.getElementById('coverCourseCode')?.value || '',
+                    courseTitle: document.getElementById('coverCourseTitle')?.value || '',
+                    docNumber: document.getElementById('coverDocNumber')?.value || '',
+                    docTitle: document.getElementById('coverDocTitle')?.value || '',
+                    submissionDate: document.getElementById('coverSubmissionDate')?.value || '',
+                    teacherName: document.getElementById('coverTeacherName')?.value || '',
+                    teacherDesignation: document.getElementById('coverTeacherDesignation')?.value || '',
+                    program: document.getElementById('coverProgram')?.value || '',
+                    submissionMode: document.querySelector('input[name="submission_mode"]:checked')?.value || 'individual',
+                    theme: document.getElementById('coverThemeSelect')?.value || 'blue',
+                    includeMarks: document.getElementById('coverIncludeMarks')?.checked ?? true,
+                    includeBorder: document.getElementById('coverIncludeBorder')?.checked ?? true,
+                    groupMembers,
                 };
-                localStorage.setItem(COVER_PREFS_STORAGE_KEY, JSON.stringify(prefs));
+                localStorage.setItem(COVER_PREFS_STORAGE_KEY, JSON.stringify(context));
+                localStorage.removeItem(LEGACY_COVER_PREFS_STORAGE_KEY);
             } catch (e) {
                 // Ignore storage quota / private mode failures
             }
         }
 
-        function loadStudentPrefs() {
+        function loadCoverContext() {
             try {
                 const raw = localStorage.getItem(COVER_PREFS_STORAGE_KEY);
                 if (!raw) {
+                    const legacyRaw = localStorage.getItem(LEGACY_COVER_PREFS_STORAGE_KEY);
+                    if (!legacyRaw) {
+                        return;
+                    }
+                    const legacy = JSON.parse(legacyRaw);
+                    if (legacy.name && document.getElementById('coverStudentName')) document.getElementById('coverStudentName').value = legacy.name;
+                    if (legacy.id && document.getElementById('coverStudentId')) document.getElementById('coverStudentId').value = legacy.id;
+                    if (legacy.batch && document.getElementById('coverBatch')) document.getElementById('coverBatch').value = legacy.batch;
+                    if (legacy.section && document.getElementById('coverSection')) document.getElementById('coverSection').value = legacy.section;
+                    if (legacy.semester && document.getElementById('coverSemester')) document.getElementById('coverSemester').value = legacy.semester;
                     return;
                 }
-                const prefs = JSON.parse(raw);
-                if (prefs.name && document.getElementById('coverStudentName')) document.getElementById('coverStudentName').value = prefs.name;
-                if (prefs.id && document.getElementById('coverStudentId')) document.getElementById('coverStudentId').value = prefs.id;
-                if (prefs.batch && document.getElementById('coverBatch')) document.getElementById('coverBatch').value = prefs.batch;
-                if (prefs.section && document.getElementById('coverSection')) document.getElementById('coverSection').value = prefs.section;
-                if (prefs.semester && document.getElementById('coverSemester')) document.getElementById('coverSemester').value = prefs.semester;
+                const context = JSON.parse(raw);
+                const setValue = (id, value) => {
+                    const element = document.getElementById(id);
+                    if (element && typeof value === 'string' && value !== '') element.value = value;
+                };
+                setValue('coverCourseCode', context.courseCode);
+                setValue('coverCourseTitle', context.courseTitle);
+                setValue('coverDocNumber', context.docNumber);
+                setValue('coverDocTitle', context.docTitle);
+                setValue('coverSemester', context.semester);
+                setValue('coverSubmissionDate', context.submissionDate);
+                setValue('coverTeacherName', context.teacherName);
+                setValue('coverTeacherDesignation', context.teacherDesignation);
+                setValue('coverStudentName', context.name);
+                setValue('coverStudentId', context.id);
+                setValue('coverBatch', context.batch);
+                setValue('coverSection', context.section);
+                setValue('coverProgram', context.program);
+
+                if (context.coverType) {
+                    const radio = document.getElementById(`coverType_${context.coverType}`);
+                    if (radio) radio.checked = true;
+                }
+                if (context.submissionMode) {
+                    const radio = document.querySelector(`input[name="submission_mode"][value="${context.submissionMode}"]`);
+                    if (radio) radio.checked = true;
+                }
+                if (context.theme) setValue('coverThemeSelect', context.theme);
+                if (typeof context.includeMarks === 'boolean') {
+                    const checkbox = document.getElementById('coverIncludeMarks');
+                    if (checkbox) checkbox.checked = context.includeMarks;
+                }
+                if (typeof context.includeBorder === 'boolean') {
+                    const checkbox = document.getElementById('coverIncludeBorder');
+                    if (checkbox) checkbox.checked = context.includeBorder;
+                }
+                if (Array.isArray(context.groupMembers) && context.submissionMode === 'group') {
+                    const list = document.getElementById('groupMembersList');
+                    if (list) {
+                        list.innerHTML = '';
+                        context.groupMembers.forEach(member => addGroupMemberRow(member.name, member.id));
+                    }
+                }
             } catch (e) {
                 // Ignore malformed storage values
             }
@@ -3456,6 +3534,7 @@
         function resetCoverForm() {
             try {
                 localStorage.removeItem(COVER_PREFS_STORAGE_KEY);
+                localStorage.removeItem(LEGACY_COVER_PREFS_STORAGE_KEY);
             } catch (e) {}
             const labRadio = document.getElementById('coverType_lab_report');
             if (labRadio) labRadio.checked = true;
@@ -3477,6 +3556,7 @@
             const indivRadio = document.querySelector('input[name="submission_mode"][value="individual"]');
             if (indivRadio) indivRadio.checked = true;
             toggleSubmissionMode();
+            saveCoverContext();
         }
 
         function printCoverPage() {
@@ -3505,6 +3585,7 @@
             clone.style.minHeight = '1123px';
             clone.style.overflow = 'hidden';
             clone.style.boxShadow = 'none';
+            clone.style.transform = 'none';
             document.body.appendChild(clone);
 
             html2canvas(clone, {
@@ -3560,6 +3641,7 @@
             clone.style.minHeight = '0';
             clone.style.overflow = 'hidden';
             clone.style.boxShadow = 'none';
+            clone.style.transform = 'none';
 
             const typeRadio = document.querySelector('input[name="cover_type"]:checked');
             const coverType = typeRadio ? typeRadio.value : 'cover_page';
@@ -3590,10 +3672,39 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             if (document.getElementById('coverPageForm')) {
-                loadStudentPrefs();
+                loadCoverContext();
+                toggleSubmissionMode();
                 updateCoverPreview();
+                fitCoverPreview();
+                const coverForm = document.getElementById('coverPageForm');
+                coverForm?.addEventListener('input', saveCoverContext);
+                coverForm?.addEventListener('change', saveCoverContext);
             }
         });
+
+        function fitCoverPreview() {
+            const viewport = document.getElementById('coverPreviewViewport');
+            const scaler = document.getElementById('coverPreviewScaler');
+            const sheet = document.getElementById('coverPageSheet');
+            if (!viewport || !scaler || !sheet) {
+                return;
+            }
+
+            const availableWidth = viewport.clientWidth;
+            const scale = Math.min(1, Math.max(0.25, (availableWidth - 16) / 794));
+            sheet.style.transform = `scale(${scale})`;
+            sheet.style.transformOrigin = 'top left';
+            scaler.style.width = `${794 * scale}px`;
+            scaler.style.height = `${1123 * scale}px`;
+        }
+
+        window.addEventListener('resize', fitCoverPreview);
+        if (typeof ResizeObserver === 'function') {
+            const coverViewport = document.getElementById('coverPreviewViewport');
+            if (coverViewport) {
+                new ResizeObserver(fitCoverPreview).observe(coverViewport);
+            }
+        }
 
         // Close on Escape or click on backdrop
         document.addEventListener('keydown', function(e) {
@@ -3629,7 +3740,7 @@
                 <div>
                     <h4 class="font-bold text-[#0078D4] text-xs uppercase tracking-wider mb-1">Student Timetable Guide</h4>
                     <p class="text-[#605E5C]">
-                        Welcome to the <strong>DIU SWE Routine Organizer</strong>. Designed to help Software Engineering students at Daffodil International University (DIU), Ashulia Smart City navigate weekly class routines, locate open study spaces, and organize courses.
+                        Welcome to the <strong>DIU SWE Routine Organizer</strong>. Designed to help Software Engineering students at Daffodil International University (DIU), Birulia Smart City navigate weekly class routines, locate open study spaces, and organize courses.
                     </p>
                 </div>
 
