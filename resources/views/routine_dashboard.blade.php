@@ -312,12 +312,20 @@
             }
             #coverPageSheet {
                 width: 210mm !important;
+                height: 297mm !important;
                 min-height: 297mm !important;
                 max-width: none !important;
                 margin: 0 auto !important;
+                overflow: hidden !important;
                 box-shadow: none !important;
                 border: none !important;
-                page-break-inside: avoid;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            #coverOuterFrame {
+                height: 100% !important;
+                min-height: 0 !important;
+                box-sizing: border-box !important;
             }
             @else
             .print-only { display: block !important; }
@@ -3493,7 +3501,9 @@
             clone.style.left = '-9999px';
             clone.style.top = '0';
             clone.style.width = '794px';
+            clone.style.height = '1123px';
             clone.style.minHeight = '1123px';
+            clone.style.overflow = 'hidden';
             clone.style.boxShadow = 'none';
             document.body.appendChild(clone);
 
@@ -3518,6 +3528,64 @@
                 console.error('Cover page export error:', err);
                 showToast('Could not generate PNG. Please use Print / Save PDF.', 'error');
             });
+        }
+
+        function exportCoverPageDoc() {
+            const sheet = document.getElementById('coverPageSheet');
+            if (!sheet) {
+                showToast('Cover page preview was not found.', 'error');
+                return;
+            }
+
+            updateCoverPreview();
+
+            const clone = sheet.cloneNode(true);
+            const sourceElements = [sheet, ...sheet.querySelectorAll('*')];
+            const cloneElements = [clone, ...clone.querySelectorAll('*')];
+
+            sourceElements.forEach((source, index) => {
+                const target = cloneElements[index];
+                if (!target) {
+                    return;
+                }
+
+                const computed = window.getComputedStyle(source);
+                target.style.cssText = Array.from(computed).map(property => {
+                    return `${property}:${computed.getPropertyValue(property)};`;
+                }).join('');
+            });
+
+            clone.style.width = '210mm';
+            clone.style.height = '297mm';
+            clone.style.minHeight = '0';
+            clone.style.overflow = 'hidden';
+            clone.style.boxShadow = 'none';
+
+            const typeRadio = document.querySelector('input[name="cover_type"]:checked');
+            const coverType = typeRadio ? typeRadio.value : 'cover_page';
+            const courseCode = (document.getElementById('coverCourseCode')?.value || 'DIU_SWE').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+            const documentHtml = `<!DOCTYPE html>
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+                <head>
+                    <meta charset="utf-8">
+                    <title>${courseCode} ${coverType} cover page</title>
+                    <style>
+                        @page WordSection1 { size: 595.3pt 841.9pt; margin: 0; }
+                        body { margin: 0; padding: 0; background: #fff; }
+                    </style>
+                </head>
+                <body><div style="page: WordSection1;">${clone.outerHTML}</div></body>
+                </html>`;
+
+            const blob = new Blob([documentHtml], { type: 'application/msword' });
+            const link = document.createElement('a');
+            link.download = `${courseCode}_${coverType}_cover_page.doc`;
+            link.href = URL.createObjectURL(blob);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(link.href);
+            showToast('A4 Cover Page Word document downloaded!', 'success');
         }
 
         document.addEventListener('DOMContentLoaded', function() {

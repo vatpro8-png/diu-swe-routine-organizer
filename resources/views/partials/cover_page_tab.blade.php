@@ -23,6 +23,10 @@
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     <span>Download PNG (A4)</span>
                 </button>
+                <button type="button" onclick="exportCoverPageDoc()" class="px-3.5 py-2 rounded-[4px] bg-[#107C41] hover:bg-[#0B6A36] text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14a2 2 0 002-2v-3H3v3a2 2 0 002 2z"></path></svg>
+                    <span>Download Word (.doc)</span>
+                </button>
             </div>
         </div>
     </div>
@@ -254,10 +258,10 @@
             <div class="w-full overflow-x-auto pb-2 flex justify-center">
                 <div id="coverPageSheet"
                      class="bg-white text-[#1A1A1A] shadow-[0_6.4px_14.4px_0_rgba(0,0,0,0.132)] shrink-0 relative flex flex-col justify-between"
-                     style="width: 794px; min-height: 1123px; padding: 48px 54px; font-family: 'Segoe UI', 'Plus Jakarta Sans', Georgia, serif; box-sizing: border-box;">
+                     style="width: 794px; height: 1123px; min-height: 1123px; overflow: hidden; padding: 48px 54px; font-family: 'Segoe UI', 'Plus Jakarta Sans', Georgia, serif; box-sizing: border-box;">
 
                     <!-- Outer Page Frame -->
-                    <div id="coverOuterFrame" class="flex-1 flex flex-col justify-between p-8 border-2 border-[#0078D4]" style="border-style: double; border-width: 4px;">
+                    <div id="coverOuterFrame" class="flex-1 flex flex-col justify-between p-8 border-2 border-[#0078D4]" style="height: 100%; min-height: 0; box-sizing: border-box; border-style: double; border-width: 4px;">
 
                         <!-- Top University Header & Inline SWE Logo -->
                         <div class="text-center space-y-2.5 pt-2">
@@ -340,7 +344,7 @@
                         </div>
 
                         <!-- Submitted To & Submitted By Grid -->
-                        <div class="my-4 grid grid-cols-2 gap-6 items-stretch">
+                        <div class="my-4 grid grid-cols-2 gap-6 items-stretch" style="break-inside: avoid; page-break-inside: avoid;">
                             <!-- Submitted To -->
                             <div class="border border-[#8A8886] rounded-[4px] p-4 flex flex-col justify-between bg-white">
                                 <div>
@@ -392,7 +396,7 @@
                         </div>
 
                         <!-- Bottom Footer: Submission Date & Signature -->
-                        <div class="pt-6 mt-2 border-t border-[#E1DFDD] flex items-end justify-between text-[12px]">
+                        <div class="pt-6 mt-2 border-t border-[#E1DFDD] flex items-end justify-between text-[12px]" style="flex-shrink: 0; break-inside: avoid; page-break-inside: avoid;">
                             <div>
                                 <span class="font-semibold text-[#605E5C]">Date of Submission:</span>
                                 <strong id="previewSubmissionDate" class="text-[#201F1E] ml-1">{{ date('d M Y') }}</strong>
